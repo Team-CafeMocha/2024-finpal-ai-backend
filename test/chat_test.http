@@ -1,0 +1,6 @@
+# CHAT API TEST
+
+GET http://127.0.0.1:8000/chat
+Accept: application/json
+
+###

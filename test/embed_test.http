@@ -1,19 +1,12 @@
-# Test your FastAPI endpoints
+# EMBED API TEST
 
-### MAIN API - API DESCRIPTION
-GET http://127.0.0.1:8000/
+GET http://127.0.0.1:8000/chat
 Accept: application/json
 
+###
 
-### CHAT API - AI CHAT RESULT
-POST http://127.0.0.1:8000/chat
+GET http://127.0.0.1:8000/embed
 Accept: application/json
-Content-Type: application/json
-
-{
-"uid": "user id",
-"content": "hello, world!"
-}
 
 ### EMBEDING API - AI EMBED RESULT
 POST http://127.0.0.1:8000/embed

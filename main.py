@@ -1,26 +1,18 @@
-from fastapi import FastAPI, Form, UploadFile
+from fastapi import FastAPI
+from controllers import (chat_controller,
+                         embed_controller,
+                         user_controller)
 
-from Requests import (ChatRequest)
-from Responses import (ChatResponse, EmbedResponse)
-from Model.MockUpModel import MockUpModel
+import os
+from dotenv import load_dotenv
+
+# environment settings
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+load_dotenv(os.path.join(BASE_DIR, ".env"))
+
 
 
 app = FastAPI()
-model = MockUpModel()
 
-
-@app.get("/")
-async def root():
-    return {"title": "FinPal", "description": "Chat with FinPal AI", "model": model.identifier}
-
-
-@app.post("/chat/")
-async def chat(chatRequest: ChatRequest):
-    requestContent = chatRequest.content
-    responseContent = await model.chat_response(requestContent)
-    return ChatResponse(requestContent, responseContent).toResponse()
-
-@app.post("/embed/")
-async def embed(file: UploadFile):
-    response = await model.embed_response(file)
-    return EmbedResponse(file.filename, response).toResponse()
+for controller in [chat_controller, embed_controller, user_controller]:
+    app.include_router(controller.router)
