@@ -148,3 +148,5 @@ fabric.properties
 # environment files
 *.env*
 .env
+/chroma_store_open
+*.pyc
