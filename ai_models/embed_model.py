@@ -59,6 +59,7 @@ class EmbedModel:
     '''private functions --------------------------------'''
 
     def __setup(self):
+
         for pdf_file_path in self.base_pdf_files:
             try:
                 self.embed(pdf_file_path)

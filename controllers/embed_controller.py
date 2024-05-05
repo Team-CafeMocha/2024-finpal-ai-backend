@@ -16,7 +16,7 @@ async def root():
 async def create_embed(file: UploadFile):
     """
     임베딩 \n
-    :param file: 임베딩 할 파일(pdf) \n
+    :param file: 임베딩 할 파일(pdf - 수정 필요, 사용 가능) \n
     :return: 임베딩 된 파일 이름 \n
     """
     return service.embed(file)

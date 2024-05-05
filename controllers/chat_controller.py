@@ -28,7 +28,7 @@ async def create_query(queryRequest: QueryRequest):
 @router.delete("/query/{query_id}")
 async def delete_query(query_id: int):
     """
-    쿼리 삭제 (미완료) \n
+    쿼리 삭제 (미구현) \n
     :param query_id: 쿼리 ID \n
     :return: 삭제된 쿼리 \n
     """
@@ -38,7 +38,7 @@ async def delete_query(query_id: int):
 @router.get("/{chat_id}/")
 async def read_chat_history(chat_id: int):
     """
-    채팅 기록 로드 (미완료) \n
+    채팅 기록 로드 (미구현) \n
     :param chat_id: 채팅 ID \n
     :return: 채팅 기록 \n
     """
@@ -48,7 +48,7 @@ async def read_chat_history(chat_id: int):
 @router.delete("/{chat_id}/")
 async def delete_chat_history(chat_id: int):
     """
-    채팅 기록 삭제 (미완료) \n
+    채팅 기록 삭제 (미구현) \n
     :param chat_id: 채팅 ID \n
     :return: 채팅 기록 \n
     """
