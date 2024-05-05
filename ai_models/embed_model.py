@@ -1,3 +1,4 @@
+import os
 import sys
 import re
 import fitz
@@ -8,11 +9,18 @@ from langchain_openai import OpenAIEmbeddings
 
 class EmbedModel:
     # MARK: - base setting
-    base_pdf_files: [str] = ["test_resources/embed_test_file_1.pdf",
-                             "test_resources/embed_test_file_2.pdf",
-                             "test_resources/embed_test_file_3.pdf"]
-    embedding_model = "text-embedding-3-large"
-    db_directory = 'chroma_store_open'
+    base_pdf_directory = os.environ["PDF_BASE_DIRECTORY"]
+    base_pdf_files: [str] = [
+        # "embed_test_file_1.pdf",
+        # "embed_test_file_2.pdf",
+        # "embed_test_file_3.pdf",
+        # "embed_test_file_4.pdf",
+        # "embed_test_file_5.pdf",
+        # "embed_test_file_6.pdf"
+    ]
+    embedding_model = os.environ["EMBEDDINGS"]
+    db_directory = os.environ["DB_DIRECTORY"]
+    vector_index = None
 
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=2000,
@@ -21,13 +29,17 @@ class EmbedModel:
     )
 
     def __init__(self):
+        self.base_pdf_files = list(map(lambda x: f"{sys.path[1]}/{self.base_pdf_directory}/{x}", self.base_pdf_files))
         self.__setup()
 
     def embed(self, pdf_file_path):
-        texts = self.__data_preprocessing(pdf_file_path)
-        pages = self.__make_chunk_data(pdf_file_path, texts)
-        self.__store_pages(pages)
-        return True
+        try:
+            texts = self.__data_preprocessing(pdf_file_path)
+            pages = self.__make_chunk_data(pdf_file_path, texts)
+            self.__store_pages(pages)
+            return True
+        except Exception as e:
+            return e
 
     def clear(self):
         # # # 정보 삭제
@@ -48,7 +60,10 @@ class EmbedModel:
 
     def __setup(self):
         for pdf_file_path in self.base_pdf_files:
-            self.embed(sys.path[1] + "/" + pdf_file_path)
+            try:
+                self.embed(pdf_file_path)
+            except FileNotFoundError:
+                continue
 
     def __data_preprocessing(self, file_path):
         """

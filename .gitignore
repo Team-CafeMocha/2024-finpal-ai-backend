@@ -146,7 +146,8 @@ fabric.properties
 
 
 # environment files
-*.env*
 .env
-/chroma_store_open
 *.pyc
+/chroma_store_open
+/vector_data
+**/__pycache__
