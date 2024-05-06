@@ -1,17 +1,19 @@
-import datetime
+from datetime import datetime
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.orm import relationship
-from .database import Base
+from database import Base
 
 
-class Chat(Base):
+class ChatEntity(Base):
     __tablename__ = "chat"
 
     id = Column(Integer, primary_key=True, index=True)
-    queries = relationship("Query", back_populates="chat")
+    description = Column(String, index=True)
+    queries = relationship("QueryEntity", back_populates="chat")
+    created_at = Column(DateTime, default=datetime.now, index=True)
 
 
-class Query(Base):
+class QueryEntity(Base):
     __tablename__ = "query"
 
     chat_id = Column(Integer, ForeignKey("chat.id"))
@@ -19,8 +21,6 @@ class Query(Base):
     query: str = Column(String, index=True)
     answer: str = Column(String, index=True)
     model: str = Column(String, index=True)
-    created_at: datetime.datetime = Column(DateTime, nullable=False)
+    created_at = Column(DateTime, default=datetime.now, index=True)
 
-    chat = relationship("Chat", back_populates="queries")
-
-
+    chat = relationship("ChatEntity", back_populates="queries")

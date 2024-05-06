@@ -5,9 +5,9 @@ T = TypeVar('T')
 
 
 class HttpResponse(BaseModel, Generic[T]):
-    isSuccess: bool
-    data: Optional[T]
-    error_message: Optional[str]
+    isSuccess: bool = True
+    data: Optional[T] = None
+    error: Optional[str] = None
 
     def __init__(self, data: Optional[T] = None, error: Optional[Exception] = None):
         super().__init__()

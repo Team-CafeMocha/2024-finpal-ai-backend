@@ -1,15 +1,25 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
-import datetime
+from datetime import datetime
 
 
-class Query(BaseModel):
+class QueryBase(BaseModel):
     chat_id: Optional[int]
-    id: int
     query: str
     answer: str
     model: str
-    created_at: datetime.datetime
+
+    class Config:
+        arbitrary_types_allowed = True
+
+
+class QueryCreate(QueryBase):
+    pass
+
+
+class Query(QueryBase):
+    id: int
+    created_at: datetime
 
     def __init__(self, chat_id: Optional[int], id: int, query: str, answer: str, model: str):
         super().__init__()
@@ -19,6 +29,4 @@ class Query(BaseModel):
         self.answer = answer
         self.model = model
 
-    class Config:
-        arbitrary_types_allowed = True
-        
+    model_config = ConfigDict(from_attributes=True)

@@ -151,3 +151,7 @@ fabric.properties
 /chroma_store_open
 /vector_data
 **/__pycache__
+
+# db
+finpal.db
+migration/

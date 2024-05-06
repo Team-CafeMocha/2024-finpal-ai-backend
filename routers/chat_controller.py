@@ -49,15 +49,15 @@ async def delete_query(query_id: int) -> HttpResponse[Query]:
 
 
 @router.get("/{chat_id}/")
-async def read_chat_history(chat_id: int) -> HttpResponse[Chat]:
+async def read_chat(chat_id: int) -> HttpResponse[Chat]:
     """
     채팅 기록 로드 (미구현) \n
     :param chat_id: 채팅 ID \n
     :return: 채팅 기록 \n
     """
     try:
-        chat = Chat(id=0, queries=[])
-        return HttpResponse(chat)
+        chat = service.load_chat_history(chat_id=chat_id)
+        return HttpResponse[Chat](chat)
     except Exception as e:
         return HttpResponse[Chat](error=e)
 

@@ -3,9 +3,10 @@ from fastapi import FastAPI
 # environment settings
 import os
 from dotenv import load_dotenv
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(BASE_DIR, ".env"))
+
+import entities
 
 from routers import (
     embed_controller,
@@ -14,7 +15,6 @@ from routers import (
 )
 
 app = FastAPI()
-
 
 @app.get("/")
 def root() -> dict:
