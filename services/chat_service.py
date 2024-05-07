@@ -3,7 +3,7 @@ from typing import Optional, List
 from ai_models.langchain_model import LangchainModel
 from repositories.chat_repository import ChatRepository
 from repositories.query_repository import QueryRepository
-from models.chat import (Chat, ChatCreate)
+from models.chat import (Chat)
 from models.query import (Query, QueryCreate)
 from datetime import datetime
 

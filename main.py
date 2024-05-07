@@ -1,13 +1,15 @@
 from fastapi import FastAPI
 
+
 # environment settings
 import os
 from dotenv import load_dotenv
 
-from models.root import Root
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(BASE_DIR, ".env"))
+
+from models.root import Root
+
 
 from routers import (
     embed_controller,
