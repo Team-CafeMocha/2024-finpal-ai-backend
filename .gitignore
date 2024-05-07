@@ -154,4 +154,4 @@ fabric.properties
 
 # db
 finpal.db
-migration/
+migration/versions/*

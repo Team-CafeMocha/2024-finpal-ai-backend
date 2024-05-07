@@ -31,3 +31,6 @@ class Chat(ChatBase):
         self.description = description
         self.queries = queries
         self.created_at = created_at
+
+    def history(self) -> [(str, str)]:
+        return list(map(lambda q: (q.query, q.answer), self.queries))

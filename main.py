@@ -3,10 +3,11 @@ from fastapi import FastAPI
 # environment settings
 import os
 from dotenv import load_dotenv
+
+from models.root import Root
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(BASE_DIR, ".env"))
-
-import entities
 
 from routers import (
     embed_controller,
@@ -16,9 +17,10 @@ from routers import (
 
 app = FastAPI()
 
-@app.get("/")
-def root() -> dict:
-    return {"status": "activate"}
+
+@app.get("/", response_model=Root)
+def root() -> Root:
+    return Root("finpal")
 
 
 for controller in [embed_controller, chat_controller, user_controller]:
