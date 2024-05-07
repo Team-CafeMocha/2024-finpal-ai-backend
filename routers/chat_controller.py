@@ -16,6 +16,11 @@ router = APIRouter(
 
 service = ChatService()
 
+responses = {
+    404: {'model': HttpResponse, 'description': 'Not Found Error'},
+    422: {'model': HttpResponse, 'description': 'Validation Error'}
+}
+
 
 @router.get("/",
             status_code=status.HTTP_200_OK,
@@ -26,7 +31,8 @@ async def root() -> Root:
 
 @router.post("/query/",
              status_code=status.HTTP_201_CREATED,
-             response_model=HttpResponse[Query])
+             response_model=HttpResponse[Query],
+             responses={**responses})
 async def create_query(queryRequest: QueryRequest) -> HttpResponse[Query]:
     """
     쿼리 요청 \n
@@ -38,7 +44,8 @@ async def create_query(queryRequest: QueryRequest) -> HttpResponse[Query]:
 
 
 @router.delete("/query/{query_id}",
-               status_code=status.HTTP_204_NO_CONTENT)
+               status_code=status.HTTP_204_NO_CONTENT,
+               responses={**responses})
 async def delete_query(query_id: int):
     """
     쿼리 삭제 \n
@@ -50,7 +57,8 @@ async def delete_query(query_id: int):
 
 @router.get("/list/",
             status_code=status.HTTP_200_OK,
-            response_model=HttpResponse[List[Chat]])
+            response_model=HttpResponse[List[Chat]],
+            responses={**responses})
 async def read_chat_list() -> HttpResponse[List[Chat]]:
     """
     모든 채팅 기록 불러오기 \n
@@ -62,7 +70,8 @@ async def read_chat_list() -> HttpResponse[List[Chat]]:
 
 @router.get("/{chat_id}/",
             status_code=status.HTTP_200_OK,
-            response_model=HttpResponse[Chat])
+            response_model=HttpResponse[Chat],
+            responses={**responses})
 async def read_chat(chat_id: int) -> HttpResponse[Chat]:
     """
     채팅 기록 불러오기 \n
@@ -74,7 +83,8 @@ async def read_chat(chat_id: int) -> HttpResponse[Chat]:
 
 
 @router.delete("/{chat_id}/",
-               status_code=status.HTTP_204_NO_CONTENT)
+               status_code=status.HTTP_204_NO_CONTENT,
+               responses={**responses})
 async def delete_chat(chat_id: int):
     """
     채팅 기록 삭제 \n

@@ -3,6 +3,9 @@ from pydantic import BaseModel
 
 T = TypeVar('T')
 
+status_code_dict = {"ValidationError": 404,
+                    "RequestValidationError": 422}
+
 
 class HttpResponse(BaseModel, Generic[T]):
     isSuccess: bool = True
@@ -15,9 +18,11 @@ class HttpResponse(BaseModel, Generic[T]):
         self.isSuccess = error is None
         self.data = data if error is None else None
         if error is not None:
-            self.error = f"{type(error)}"
+            self.error = f"{type(error).__name__}"
             self.error_message = f"{error}"
-            print(type(error), error)
+
+    def status_code(self):
+        return status_code_dict[self.error]
 
     class Config:
         arbitrary_types_allowed = True

@@ -3,8 +3,8 @@ import datetime
 
 
 class Root(BaseModel):
-    name: str
-    status: str
+    name: str = ""
+    status: str = ""
 
     def __init__(self, name: str, status="activate"):
         super().__init__()
