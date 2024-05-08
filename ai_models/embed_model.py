@@ -11,12 +11,12 @@ class EmbedModel:
     # MARK: - base setting
     base_pdf_directory = os.environ["PDF_BASE_DIRECTORY"]
     base_pdf_files: [str] = [
-        "embed_test_file_1.pdf",
-        "embed_test_file_2.pdf",
-        "embed_test_file_3.pdf",
-        "embed_test_file_4.pdf",
-        "embed_test_file_5.pdf",
-        "embed_test_file_6.pdf"
+        # "embed_test_file_1.pdf",
+        # "embed_test_file_2.pdf",
+        # "embed_test_file_3.pdf",
+        # "embed_test_file_4.pdf",
+        # "embed_test_file_5.pdf",
+        # "embed_test_file_6.pdf"
     ]
     embedding_model = os.environ["EMBEDDINGS"]
     db_directory = os.environ["DB_DIRECTORY"]
