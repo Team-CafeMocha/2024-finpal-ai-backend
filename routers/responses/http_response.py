@@ -4,7 +4,11 @@ from pydantic import BaseModel
 T = TypeVar('T')
 
 status_code_dict = {"ValidationError": 404,
-                    "RequestValidationError": 422}
+                    "RequestValidationError": 422,
+                    "ValueError": 400,
+                    "EmailAlreadyExistsError": 400,
+                    "InvalidIdTokenError": 400,
+                    "AccountException": 400}
 
 
 class HttpResponse(BaseModel, Generic[T]):
@@ -22,6 +26,8 @@ class HttpResponse(BaseModel, Generic[T]):
             self.error_message = f"{error}"
 
     def status_code(self):
+        if self.error is None: return 200
+        if self.error not in status_code_dict.keys(): return 500
         return status_code_dict[self.error]
 
     class Config:

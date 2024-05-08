@@ -1,6 +1,8 @@
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
-
+from firebase_admin import credentials
+import firebase_admin
+import uvicorn
 # environment settings
 import os
 from dotenv import load_dotenv
@@ -19,6 +21,9 @@ from routers import (
 
 app = FastAPI()
 
+if not firebase_admin._apps:
+    cred = credentials.Certificate("firebase-adminsdk-key.json")
+    default_app = firebase_admin.initialize_app(cred)
 
 @app.get("/", response_model=Root)
 def root() -> Root:
@@ -36,3 +41,6 @@ async def exception_handler(request: Request, e: Exception):
 
 for controller in [embed_controller, chat_controller, user_controller]:
     app.include_router(controller.router)
+
+if __name__ == "__main__":
+    uvicorn.run("main:app")
