@@ -33,13 +33,13 @@ async def root() -> Root:
              status_code=status.HTTP_201_CREATED,
              response_model=HttpResponse[Query],
              responses={**responses})
-async def create_query(queryRequest: QueryRequest) -> HttpResponse[Query]:
+async def create_query(query_request: QueryRequest) -> HttpResponse[Query]:
     """
     쿼리 요청 \n
-    :param queryRequest: 쿼리 요청 \n
+    :param query_request: 쿼리 요청 \n
     :return: 생성된 쿼리 (질문, 답변) \n
     """
-    query = service.query(chat_id=queryRequest.chat_id, query=queryRequest.query)
+    query = service.query(chat_id=query_request.chat_id, query=query_request.query)
     return HttpResponse[Query](query)
 
 

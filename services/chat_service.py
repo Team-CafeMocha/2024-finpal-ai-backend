@@ -5,7 +5,6 @@ from repositories.chat_repository import ChatRepository
 from repositories.query_repository import QueryRepository
 from models.chat import (Chat)
 from models.query import (Query, QueryCreate)
-from datetime import datetime
 
 
 class ChatService:

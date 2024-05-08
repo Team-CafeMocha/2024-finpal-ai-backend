@@ -1,65 +1,49 @@
-from fastapi import APIRouter
-from firebase_admin import auth
-from models.account import SignUpSchema, LoginSchema
-from fastapi.responses import JSONResponse
-from fastapi.exceptions import HTTPException
-import requests
+from fastapi import APIRouter, status
+
 from models.root import Root
-import os
+from models.message import Message
+from models.token import Token
+from models.user import User
+from routers.requests.account_request import AccountRequest
+from routers.requests.token_request import TokenRequest
+from routers.responses.http_response import HttpResponse
+from services.authentication_service import AuthenticationService
 
 router = APIRouter(
-	prefix="/user",
+    prefix="/user",
     tags=["user"]
 )
+
+authentication_service = AuthenticationService()
+
 
 @router.get("/")
 async def root() -> Root:
     return Root("User API")
 
-@router.post('/signup')
-async def create_an_account(user_data:SignUpSchema):
-    email = user_data.email
-    password = user_data.password
 
-    try:
-        user =  auth.create_user(
-            email = email,
-            password = password
-        )
+@router.post('/signup',
+             status_code=status.HTTP_201_CREATED,
+             response_model=HttpResponse[Message])
+async def create_an_account(account_request: AccountRequest) -> HttpResponse[Message]:
+    user = authentication_service.sign_up(email=account_request.email, password=account_request.password)
+    message = Message(message=f" {user.uid}의 계정이 성공적으로 생성되었습니다.")
+    print(message.model_dump())
+    return HttpResponse[Message](message)
 
-        return JSONResponse(content={"message":f" {user.uid}의 계정이 성공적으로 생성되었습니다."},
-                            status_code= 201
-                )
-    except auth.EmailAlreadyExistsError:
-        raise HTTPException(
-            status_code= 400,
-            detail= f"{email}이 사용된 계정이 이미 존재합니다."
-        )
-    
-@router.post("/login")
-async def login(user_data: LoginSchema):
-    API_KEY = os.environ["FIREBASE_API_KEY"]
-    url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={API_KEY}"
-    headers = {
-        "Content-Type": "application/json"
-    }
-    data = {
-        "email": user_data.email,
-        "password": user_data.password,
-        "returnSecureToken": True
-    }
-    response = requests.post(url, json=data, headers=headers)
-    result = response.json()
-    if response.status_code == 200:
-        return JSONResponse(content={"token": result['idToken']}, status_code=200)
-    else:
-        raise HTTPException(status_code=response.status_code, detail=result.get("error", {}).get("message", "An error occurred"))
-    
 
-@router.post("/ping")
-async def validate_token(token: str):
-    try:
-        decoded_token = auth.verify_id_token(token)
-        return JSONResponse(content={"uid": decoded_token['uid']}, status_code=200)
-    except auth.InvalidIdTokenError:
-        raise HTTPException(status_code=400, detail="Invalid token")
+@router.post("/login",
+             status_code=status.HTTP_200_OK,
+             response_model=HttpResponse[Token])
+async def login(account_request: AccountRequest):
+    token = authentication_service.sign_in(email=account_request.email, password=account_request.password)
+    return HttpResponse[Token](token)
+
+
+@router.post("/ping",
+             status_code=status.HTTP_200_OK,
+             response_model=HttpResponse[User])
+async def validate_token(token_request: TokenRequest):
+    token = Token(token=token_request.token)
+    user = authentication_service.check_token_validation(token)
+    return HttpResponse[User](user)
