@@ -11,12 +11,12 @@ class EmbedModel:
     # MARK: - base setting
     base_pdf_directory = os.environ["PDF_BASE_DIRECTORY"]
     base_pdf_files: [str] = [
-        # "embed_test_file_1.pdf",
-        # "embed_test_file_2.pdf",
-        # "embed_test_file_3.pdf",
-        # "embed_test_file_4.pdf",
-        # "embed_test_file_5.pdf",
-        # "embed_test_file_6.pdf"
+        "embed_test_file_1.pdf",
+        "embed_test_file_2.pdf",
+        "embed_test_file_3.pdf",
+        "embed_test_file_4.pdf",
+        "embed_test_file_5.pdf",
+        "embed_test_file_6.pdf"
     ]
     embedding_model = os.environ["EMBEDDINGS"]
     db_directory = os.environ["DB_DIRECTORY"]
@@ -29,8 +29,10 @@ class EmbedModel:
     )
 
     def __init__(self):
-        self.base_pdf_files = list(map(lambda x: f"{sys.path[1]}/{self.base_pdf_directory}/{x}", self.base_pdf_files))
-        self.__setup()
+        base_pdf_directory_path = f"{sys.path[1]}/{self.base_pdf_directory}"
+        if not os.path.isdir(base_pdf_directory_path):
+            base_pdf_file_paths = list(map(lambda x: f"{base_pdf_directory_path}/{x}", self.base_pdf_files))
+            self.__setup(base_pdf_file_paths)
 
     def embed(self, pdf_file_path):
         try:
@@ -58,9 +60,9 @@ class EmbedModel:
 
     '''private functions --------------------------------'''
 
-    def __setup(self):
+    def __setup(self, base_pdf_file_paths):
 
-        for pdf_file_path in self.base_pdf_files:
+        for pdf_file_path in base_pdf_file_paths:
             try:
                 self.embed(pdf_file_path)
             except FileNotFoundError:

@@ -3,6 +3,8 @@ from fastapi.responses import JSONResponse
 from firebase_admin import credentials
 import firebase_admin
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
+
 # environment settings
 import os
 from dotenv import load_dotenv
@@ -25,6 +27,7 @@ if not firebase_admin._apps:
     cred = credentials.Certificate("firebase-adminsdk-key.json")
     default_app = firebase_admin.initialize_app(cred)
 
+
 @app.get("/", response_model=Root)
 def root() -> Root:
     return Root("finpal")
@@ -38,6 +41,17 @@ async def exception_handler(request: Request, e: Exception):
         content=response.model_dump()
     )
 
+
+origins = ["http://localhost",
+           "http://localhost:3000"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 for controller in [embed_controller, chat_controller, user_controller]:
     app.include_router(controller.router)
