@@ -11,12 +11,12 @@ class EmbedModel:
     # MARK: - base setting
     base_pdf_directory = os.environ["PDF_BASE_DIRECTORY"]
     base_pdf_files: [str] = [
-        "embed_test_file_1.pdf",
-        "embed_test_file_2.pdf",
-        "embed_test_file_3.pdf",
-        "embed_test_file_4.pdf",
-        "embed_test_file_5.pdf",
-        "embed_test_file_6.pdf"
+        "두들린.pdf",
+        "루나써클.pdf",
+        "뤼이드.pdf",
+        "리디.pdf",
+        "마크앤컴퍼니.pdf",
+        "메디픽.pdf"
     ]
     embedding_model = os.environ["EMBEDDINGS"]
     db_directory = os.environ["DB_DIRECTORY"]
@@ -29,8 +29,8 @@ class EmbedModel:
     )
 
     def __init__(self):
-        base_pdf_directory_path = f"{sys.path[1]}/{self.base_pdf_directory}"
-        if not os.path.isdir(base_pdf_directory_path):
+        if not os.path.isdir(self.db_directory):
+            base_pdf_directory_path = f"{sys.path[1]}/{self.base_pdf_directory}"
             base_pdf_file_paths = list(map(lambda x: f"{base_pdf_directory_path}/{x}", self.base_pdf_files))
             self.__setup(base_pdf_file_paths)
 
@@ -41,6 +41,7 @@ class EmbedModel:
             self.__store_pages(pages)
             return True
         except Exception as e:
+            print(e)
             return e
 
     def clear(self):
@@ -61,7 +62,6 @@ class EmbedModel:
     '''private functions --------------------------------'''
 
     def __setup(self, base_pdf_file_paths):
-
         for pdf_file_path in base_pdf_file_paths:
             try:
                 self.embed(pdf_file_path)
@@ -158,7 +158,9 @@ class EmbedModel:
         * Document(page_content='< del>  <> 1 주의 금액 400원  , metadata={'source': 'real_data_ex.pdf'}) 형식
         """
         split_texts = self.text_splitter.split_text(texts)
-        metadata = [{'source': pdf}] * len(split_texts)
+        filename = pdf.split("/")[-1]
+        metadata = [{'source': filename}] * len(split_texts)
+        print("metadata", metadata)
         pages = self.text_splitter.create_documents(split_texts, metadatas=metadata)
         return pages
 

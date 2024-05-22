@@ -7,10 +7,23 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_community.llms import HuggingFaceEndpoint
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
+from langchain.chains.query_constructor.base import AttributeInfo
+from langchain_openai import ChatOpenAI
+from langchain.retrievers.self_query.base import SelfQueryRetriever
+
 
 class LangchainModel:
     embeddings = os.environ["EMBEDDINGS"]
     db_directory = os.environ["DB_DIRECTORY"]
+
+    base_pdf_files: [str] = [
+        "두들린.pdf",
+        "루나써클.pdf",
+        "뤼이드.pdf",
+        "리디.pdf",
+        "마크앤컴퍼니.pdf",
+        "메디픽.pdf"
+    ]
 
     memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 
@@ -45,12 +58,45 @@ class LangchainModel:
         embeddings_open = OpenAIEmbeddings(model=self.embeddings)
         vector_index = Chroma(persist_directory=self.db_directory, embedding_function=embeddings_open)
         self.repo_id = os.environ["HF_LLM_REPO_ID"]
-        self.retriever = vector_index.as_retriever(
-            search_type="similarity",
+
+        # self.retriever = vector_index.as_retriever(
+        #     search_type="similarity",
+        #     search_kwargs={
+        #         "k": 5,
+        #     }
+        # )
+
+        # --- new ---
+        pdfs_info = ",".join(list(map(lambda x: f"\'{x}\'", self.base_pdf_files)))
+        metadata_field_info = [
+            AttributeInfo(
+                name="source",
+                description="The company the chunk is from, should be one of " + pdfs_info,
+                type="string",
+            )
+        ]
+
+        document_content_description = "company information"
+
+        llm = ChatOpenAI(temperature=0)
+
+        self.retriever = SelfQueryRetriever.from_llm(
+            llm,
+            vector_index,
+            document_content_description,
+            metadata_field_info,
             search_kwargs={
-                "k": 5,
+                "k": 5,  # Select top k search results
             }
         )
+
+        # ---  ---
+
+        # open_llm = ChatOpenAI(
+        #     temperature=0.5,  # 창의성 (0.0 ~ 2.0)
+        #     max_tokens=2048,  # 최대 토큰수
+        #     model_name="gpt-3.5-turbo",  # 모델명
+        # )
 
         self.llm = HuggingFaceEndpoint(
             repo_id=self.repo_id,
@@ -59,12 +105,6 @@ class LangchainModel:
             callbacks=[StreamingStdOutCallbackHandler()],
             streaming=True,
         )
-
-        # open_llm = ChatOpenAI(
-        #     temperature=0.5,  # 창의성 (0.0 ~ 2.0)
-        #     max_tokens=2048,  # 최대 토큰수
-        #     model_name="gpt-3.5-turbo",  # 모델명
-        # )
 
         self.conv_chain = ConversationalRetrievalChain.from_llm(
             self.llm,
