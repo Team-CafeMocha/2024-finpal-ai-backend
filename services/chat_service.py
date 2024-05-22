@@ -1,3 +1,4 @@
+import re
 from typing import Optional, List
 
 from ai_models.langchain_model import LangchainModel
@@ -20,10 +21,14 @@ class ChatService:
             chat_history = self.chat_repository.read_chat(chat_id).history()
 
         result = self.langchain_model.query(query=query, chat_history=chat_history)
+        answer = re.sub("</s>", "", result["answer"])
+        idx = answer.find(":")
+        if idx != -1:
+            answer = answer[idx + 1:]
         query_create = QueryCreate(chat_id=chat_id,
-                            query=result["question"],
-                            answer=result["answer"],
-                            model=self.langchain_model.repo_id)
+                                   query=result["question"],
+                                   answer=answer,
+                                   model=self.langchain_model.repo_id)
         query_result = self.query_repository.create_query(queryCreate=query_create)
         return query_result
 
