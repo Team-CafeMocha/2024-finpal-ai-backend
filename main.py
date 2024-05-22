@@ -43,7 +43,8 @@ async def exception_handler(request: Request, e: Exception):
 
 
 origins = ["http://localhost",
-           "http://localhost:3000"]
+           "http://localhost:3000",
+           "https://finpal.vercel.app"]
 
 app.add_middleware(
     CORSMiddleware,
